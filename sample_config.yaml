@@ -1,0 +1,8 @@
+containers:
+  # - test-airflow-webserver-1
+  - sample_monitor_deploy-grafana-1
+  # - polaris-polaris-1
+  # - selenium
+  # - polaris-vega-postgres-1 
+
+server_address: 0.0.0.0:8091

@@ -1,0 +1,4 @@
+containers:
+  - sample_monitor_deploy-grafana-1
+
+server_address: 0.0.0.0:8091
