@@ -3,19 +3,21 @@ package collectors
 import (
 	"context"
 	"docker-collector/pkg/metrics"
-	"encoding/json"
 	"log"
+	"reflect"
 	"strings"
 
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/client"
 )
 
 type DockerCli struct {
-	CnObserve map[string]metrics.CnMetrics
-	CnsID     map[string]string
-	cli       *client.Client
-	ctx       context.Context
+	CnObserve   map[string]metrics.CnMetrics
+	CnsID       map[string]string
+	cli         *client.Client
+	ctx         context.Context
+	filtersArgs filters.Args
 }
 
 func (d *DockerCli) Constructor() {
@@ -26,20 +28,32 @@ func (d *DockerCli) Constructor() {
 	}
 	d.ctx = context.Background()
 	d.CnsID = map[string]string{}
+	d.filtersArgs = filters.NewArgs()
+	for cnName, _ := range d.CnObserve {
+		d.filtersArgs.Add("name", cnName)
+	}
 	d.addContainerID()
 }
 
 func (d *DockerCli) addContainerID() {
-	containers, err := d.cli.ContainerList(d.ctx, types.ContainerListOptions{})
+	containers, err := d.cli.ContainerList(d.ctx, types.ContainerListOptions{
+		Filters: d.filtersArgs,
+	})
 	if err != nil {
 		log.Panic(err)
 	}
-	for cnName, _ := range d.CnObserve {
-		for _, dockerCn := range containers {
-			dockerCNName := strings.Replace(dockerCn.Names[0], "/", "", 1)
-			if cnName == dockerCNName {
-				// log.Printf("Update container ID for container: %s", cnName)
-				d.CnsID[cnName] = dockerCn.ID
+	for _, value := range containers {
+		dockerCNName := strings.Replace(value.Names[0], "/", "", 1)
+		d.CnsID[dockerCNName] = value.ID
+	}
+	// Check if container didn't find by name
+	CnsIDKeys := reflect.ValueOf(d.CnsID).MapKeys()
+	CnObserveKeys := reflect.ValueOf(d.CnObserve).MapKeys()
+	if !reflect.DeepEqual(CnsIDKeys, CnObserveKeys) {
+		for key, _ := range d.CnObserve {
+			_, ok := d.CnsID[key]
+			if !ok {
+				log.Printf("WARN container: %s didn't found in the docker daemon's host", key)
 			}
 		}
 	}
@@ -73,29 +87,36 @@ type memoryStats struct {
 
 func (d *DockerCli) getOneMetricValue(cnName, cnId string) {
 	// log.Printf("get metric to container %s", cnName)
-	value, err := d.cli.ContainerStats(d.ctx, cnId, false)
-	if err != nil {
-		log.Printf("cannot get container stats for container: %s, by error: %v", cnName, err)
-	} else {
-		result := DockerStats{}
-		json.NewDecoder(value.Body).Decode(&result)
-		cpuUsagePercentParams := &CpuUsagePercentParams{
-			contCpuTotal:    result.Cpu.Usage.Total,
-			sysCpu:          result.Cpu.SystemCpuUsage,
-			preContCpuTotal: result.PreCpu.Usage.Total,
-			preSysCpu:       result.PreCpu.SystemCpuUsage,
-			cpuCount:        result.Cpu.CpuCount,
-		}
-		cpuPrecent := cpuUsagePercent(cpuUsagePercentParams)
-		memory := result.Memory.Usage - result.Memory.MemoryStats.Cache
-		d.CnObserve[cnName].Gauges["cpu"].Set(cpuPrecent)
-		d.CnObserve[cnName].Gauges["memory"].Set(float64(memory))
-	}
+	// value, err := d.cli.ContainerStats(d.ctx, cnId, false)
+	// if err != nil {
+	// 	log.Printf("cannot get container stats for container: %s, by error: %v", cnName, err)
+	// } else {
+	// 	result := DockerStats{}
+	// 	json.NewDecoder(value.Body).Decode(&result)
+
+	// 	cpuPrecent := cpuUsagePercent(&CpuUsagePercentParams{
+	// 		contCpuTotal:    result.Cpu.Usage.Total,
+	// 		sysCpu:          result.Cpu.SystemCpuUsage,
+	// 		preContCpuTotal: result.PreCpu.Usage.Total,
+	// 		preSysCpu:       result.PreCpu.SystemCpuUsage,
+	// 		cpuCount:        result.Cpu.CpuCount,
+	// 	})
+	// 	memory := result.Memory.Usage - result.Memory.MemoryStats.Cache
+	// 	// test1 := *d.CnObserve[cnName].Gauges["cpu"]
+	// 	// test1.Set(cpuPrecent)
+
+	// 	// test2 := *d.CnObserve[cnName].Gauges["memory"]
+	// 	// test2.Set(float64(memory))
+	// 	d.CnObserve[cnName].Gauges["cpu"].Set(cpuPrecent)
+	// 	d.CnObserve[cnName].Gauges["memory"].Set(float64(memory))
+	// }
+	d.CnObserve[cnName].Gauges["cpu"].Set(10)
+	d.CnObserve[cnName].Gauges["memory"].Set(float64(20))
 }
 
 func (d *DockerCli) GetMetricsValue() {
 	d.addContainerID()
 	for key, value := range d.CnsID {
-		go d.getOneMetricValue(key, value)
+		d.getOneMetricValue(key, value)
 	}
 }

@@ -48,9 +48,9 @@ services:
 
   collector:
     <<: *common
-    image: collector:test
+    image: collector:latest
     ports:
-      - 8091:8091
+      - 8099:8099
     environment:
       - DOCKER_API_VERSION=1.41
     volumes:

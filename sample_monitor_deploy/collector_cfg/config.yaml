@@ -1,4 +1,8 @@
 containers:
   - sample_monitor_deploy-grafana-1
+  - sample_monitor_deploy-collector-1
+  - sample_monitor_deploy-prometheus-1
+  - sample_monitor_deploy-prometheus-44
+  - camunda-golang-worker-camunda-worker-1
 
 server_address: 0.0.0.0:8091

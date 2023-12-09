@@ -6,3 +6,11 @@ scrape_configs:
     static_configs:
       # - targets: ["host.docker.internal:8091"]
       - targets: ["collector:8091"]
+
+  - job_name: caii-collector
+    static_configs:
+      - targets: ["docker.for.mac.localhost:9080"]
+
+  - job_name: caii-remote-collector
+    static_configs:
+      - targets: ["10.213.57.240:9080"]

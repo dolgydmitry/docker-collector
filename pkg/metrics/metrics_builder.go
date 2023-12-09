@@ -58,6 +58,7 @@ func (builder *MetricBuilder) metricsByContainer(cnName string) {
 			case "gauge":
 				metrics.Gauges = createGauger(cnName, metricNames)
 			}
+			metrics.Counters = createCounter(cnName, metricNames)
 		}
 	}
 	builder.Metrics[cnName] = metrics
@@ -92,21 +93,3 @@ func createGauger(cnName string, metricNames []string) map[string]prometheus.Gau
 	}
 	return result
 }
-
-// func (builder *MetricBuilderCounter) CreateMetric(cnNames *[]string) map[string]map[string]prometheus.Counter {
-// 	result := map[string]map[string]prometheus.Counter{}
-// 	for _, cnName := range *cnNames {
-// 		metrics := map[string]prometheus.Counter{}
-// 		for _, valueType := range builder.ValueTypes {
-// 			metricNameSands := fmt.Sprintf("%v_%v_%v", appName, cnName, valueType)
-// 			metricName := strings.Replace(metricNameSands, "-", "_", -1)
-// 			newMetric := promauto.NewCounter(prometheus.CounterOpts{
-// 				Name: metricName,
-// 				Help: help,
-// 			})
-// 			metrics[valueType] = newMetric
-// 		}
-// 		result[cnName] = metrics
-// 	}
-// 	return result
-// }
