@@ -1,4 +1,4 @@
 include:
   - project: cicd122/ci-templates
-    file: /ci-templates/base/base_build.yml
+    file: /base/base_build.yml
 
