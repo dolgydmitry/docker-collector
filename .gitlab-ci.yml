@@ -1,0 +1,3 @@
+include:
+  - project: cicd122/ci-templates
+    file: /base/base_build.yml
