@@ -20,6 +20,6 @@ secret
 2. Currently it provide two metrics:
     - cpu (percent usage)
     - memory (byte allocated)
-3. It provide standart prometheus ebdpoint: /metrics
+3. It provide standart prometheus endpoint: /metrics
 
 

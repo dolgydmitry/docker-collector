@@ -10,6 +10,12 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
+const (
+	appName    = "docker-collector"
+	metricType = "counter"
+	help       = "custom stubs"
+)
+
 var metricList = []string{"cpu", "memory"}
 var CpuName = metricList[0]
 var MemoryName = metricList[1]
