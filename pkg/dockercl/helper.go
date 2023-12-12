@@ -20,7 +20,7 @@ func CpuUsagePercent(params *CpuUsagePercentParams) float64 {
 	systemDelta := params.SysCpu - params.PreSysCpu
 	var cpuPercent = 0.0
 	if systemDelta > 0.0 && cpuDelta > 0.0 {
-		cpuPercent = ((cpuDelta / systemDelta) * float64(params.CpuCount)) * 100.0
+		cpuPercent = (cpuDelta / systemDelta) * float64(params.CpuCount) * 100.0
 	}
 	return cpuPercent
 }

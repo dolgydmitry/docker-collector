@@ -53,7 +53,7 @@ type CnNameID struct {
 	Memory   int64
 }
 
-var GetStats = func(ctx context.Context, cnStuff <-chan CnNameID, cli *client.Client) <-chan CnNameID {
+var getStats = func(ctx context.Context, cnStuff <-chan CnNameID, cli *client.Client) <-chan CnNameID {
 	/*
 		Generator use container ID grep docker stats
 	*/
@@ -75,7 +75,7 @@ var GetStats = func(ctx context.Context, cnStuff <-chan CnNameID, cli *client.Cl
 	return statsStream
 }
 
-var ComputeMetric = func(ctx context.Context, cnStuff <-chan CnNameID) <-chan CnNameID {
+var computeMetric = func(ctx context.Context, cnStuff <-chan CnNameID) <-chan CnNameID {
 	respStream := make(chan CnNameID)
 	go func() {
 		defer close(respStream)
@@ -100,7 +100,7 @@ var ComputeMetric = func(ctx context.Context, cnStuff <-chan CnNameID) <-chan Cn
 	return respStream
 }
 
-func UpdateMetric(ctx context.Context, inStream <-chan CnNameID, metricsMap map[string]map[string]prometheus.Gauge) {
+func updateMetric(ctx context.Context, inStream <-chan CnNameID, metricsMap map[string]map[string]prometheus.Gauge) {
 	var wg sync.WaitGroup
 	for t := range inStream {
 		wg.Add(1)
@@ -171,7 +171,7 @@ var containersGen = func(ctx context.Context, containers []types.Container) <-ch
 	return outStream
 }
 
-func MetricProccesor(cnNameList *[]string, metricsMap map[string]map[string]prometheus.Gauge, cli *client.Client) {
+func metricProccesor(cnNameList *[]string, metricsMap map[string]map[string]prometheus.Gauge, cli *client.Client) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -186,12 +186,12 @@ func MetricProccesor(cnNameList *[]string, metricsMap map[string]map[string]prom
 		log.Panic(err)
 	}
 
-	UpdateMetric(ctx, ComputeMetric(ctx, GetStats(ctx, containersGen(ctx, containers), cli)), metricsMap)
+	updateMetric(ctx, computeMetric(ctx, getStats(ctx, containersGen(ctx, containers), cli)), metricsMap)
 }
 
 func GetAskDocker(chNameList *[]string, metricsMap map[string]map[string]prometheus.Gauge, cli *client.Client) {
 	for {
-		MetricProccesor(chNameList, metricsMap, cli)
+		metricProccesor(chNameList, metricsMap, cli)
 
 		// debug part
 		// var m runtime.MemStats
