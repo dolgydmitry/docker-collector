@@ -1,3 +1,17 @@
 include:
   - project: cicd122/ci-templates
     file: /base/base_build.yml
+
+  - project: cicd122/ci-templates
+    file: /base/base_test.yml
+
+variables:
+  GOLANG_TEST: "True"
+
+stages:
+  - test
+  - build
+
+build base:
+  needs:
+    - test go
