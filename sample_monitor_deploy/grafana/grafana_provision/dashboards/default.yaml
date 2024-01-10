@@ -1,0 +1,9 @@
+apiVersion: 1
+
+providers:
+  - name: Sample # A uniquely identifiable name for the provider
+    folder: Docker collector # The folder where to place the dashboards
+    type: file
+    options:
+      path:
+        /etc/grafana/provisioning/dashboards/sample_dashboard.json
