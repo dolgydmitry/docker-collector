@@ -1,7 +1,7 @@
 addenv:
 	export DOCKER_API_VERSION=1.41
 test:
-	go test ./... -v
+	go test -v ./...
 run:
 	go run cmd/main/main.go
 showpid:
