@@ -19,9 +19,9 @@ jobs:
       - name: Kaniko build
         uses: aevea/action-kaniko@master
         with:
-          image: dvdolgy/${{ github.repository }}
+          image: dvdolgy/docker-collector
           tag: latest
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           cache: true
-          cache_registry: ${{ github.repository }}/cache
+          cache_registry: docker-collector/cache
