@@ -5,7 +5,8 @@
 ### Get start 
 ###-------------------------------------------------------------------------
 1. clone repo
-2. specify in file config.yml in folder ./sample_monitor_deploy/collector_cfg
+2. change folder permision for grafana chmod 777 -R sample_monitor_deploy/grafana/
+3. specify in file config.yml in folder ./sample_monitor_deploy/collector_cfg
    
     containers:
         shall write conatner name
