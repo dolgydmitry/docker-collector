@@ -1,25 +1,36 @@
-# docker-collector
-## !!!! app use DOCKER_API_VERSION=1.41 ##
-## Tested only for Unix ##
+## docker-collector
+ !!!! app use DOCKER_API_VERSION=1.41 ##
+ Tested only for Unix ##
 
 ### Get start 
-
-1. build image use Dockerfile
-2. specify config.yml in folder ./sample_monitor_deploy
-containers:
-    shall write conatner name
-See sample in this directory
-3. Run docker compose use make
-make monitordeploy
-4. Check Grafana UI on localhost:3000
+###-------------------------------------------------------------------------
+1. clone repo
+2. specify in file config.yml in folder ./sample_monitor_deploy/collector_cfg
+   
+    containers:
+        shall write conatner name
+    See sample in this directory
+   
+4. Run docker compose use make:
+    make monitordeploy
+   
+6. Check Grafana UI on localhost:3000
 admin
 secret
 
-### Desc
-1. App expose container perfomance use promehteus.
-2. Currently it provide two metrics:
+Sample dashboard located in folder "Docker collector"
+
+### Description
+###-------------------------------------------------------------------------
+1. App expose containers perfomance use promehteus.
+2. User can specify which containers shall be observe. For this purpose use file config.yml:
+
+for more example, see get start topic, point 2
+
+4. Currently it provide two metrics:
     - cpu (percent usage)
     - memory (byte allocated)
-3. It provide standart prometheus endpoint: /metrics
+5. App expose calculated values, ready to use by human (cpu usage in percetn and memory utilization in byte).
+6. It provide standart prometheus endpoint: /metrics
 
 
