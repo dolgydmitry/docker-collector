@@ -4,6 +4,6 @@ datasources:
     access: proxy
     orgId: 1
     uid: prometheus
-    url: http://prometheus:9090
+    url: http://sample_monitor_deploy-prometheus-1:9090
     editable: true
     isDefault: true
