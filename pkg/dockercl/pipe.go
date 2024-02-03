@@ -5,10 +5,11 @@ import (
 	// "docker-collector/pkg/collectors"
 	"docker-collector/pkg/metrics"
 	"encoding/json"
-	"log"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/rs/zerolog/log"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/filters"
@@ -160,7 +161,7 @@ var containersGen = func(ctx context.Context, containers []types.Container) <-ch
 			dockerCNName := strings.Replace(value.Names[0], "/", "", 1)
 			select {
 			case <-ctx.Done():
-				log.Println("close simpleGen by reason: " + ctx.Err().Error() + "")
+				log.Printf("close simpleGen by reason: %s" + ctx.Err().Error())
 				return
 
 			case outStream <- CnNameID{CnName: dockerCNName, CnId: value.ID}:
@@ -183,7 +184,7 @@ func metricProccesor(cnNameList *[]string, metricsMap map[string]map[string]prom
 		Filters: filtersArgs,
 	})
 	if err != nil {
-		log.Panic(err)
+		log.Panic().Err(err)
 	}
 
 	updateMetric(ctx, computeMetric(ctx, getStats(ctx, containersGen(ctx, containers), cli)), metricsMap)

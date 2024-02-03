@@ -7,7 +7,10 @@ import (
 	"docker-collector/pkg/metrics"
 	"docker-collector/pkg/server"
 	"docker-collector/pkg/utils"
-	"log"
+	"os"
+
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 
 	// "net/http"
 	"runtime/debug"
@@ -28,10 +31,12 @@ func main() {
 	myFigure := figure.NewColorFigure("Docker collector", "", "green", true)
 	myFigure.Print()
 
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+
 	debug.SetMemoryLimit(14096000)
 	config, err := utils.LoadInitialConfigYaml()
 	if err != nil {
-		log.Fatal("cannot load config file: ", err)
+		log.Fatal().Msgf("cannot load config file: %s", err)
 	}
 
 	var cli, _ = client.NewClientWithOpts(client.FromEnv)
