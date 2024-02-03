@@ -2,7 +2,8 @@ package metrics
 
 import (
 	"fmt"
-	"log"
+
+	"github.com/rs/zerolog/log"
 
 	"strings"
 
@@ -19,21 +20,6 @@ const (
 var metricList = []string{"cpu", "memory"}
 var CpuName = metricList[0]
 var MemoryName = metricList[1]
-
-func createCounterV1(cnName string) map[string]prometheus.Counter {
-	var result = map[string]prometheus.Counter{}
-	for _, metricNameIn := range metricList {
-		metricNameSands := fmt.Sprintf("%v_%v_%v", appName, cnName, metricNameIn)
-		metricName := strings.Replace(metricNameSands, "-", "_", -1)
-		log.Printf("Create metric : %s", cnName)
-		newMetric := promauto.NewCounter(prometheus.CounterOpts{
-			Name: metricName,
-			Help: help,
-		})
-		result[metricNameIn] = newMetric
-	}
-	return result
-}
 
 func createGaugerV1(cnName string) map[string]prometheus.Gauge {
 	var result = map[string]prometheus.Gauge{}

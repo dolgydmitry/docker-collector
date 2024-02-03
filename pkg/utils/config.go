@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 	"runtime"
+
+	"github.com/rs/zerolog/log"
 
 	"github.com/spf13/viper"
 )
@@ -27,12 +28,12 @@ func LoadInitialConfig() *Config {
 	config := &Config{}
 	file, err := os.Open(loadPath)
 	if err != nil {
-		log.Panic(err)
+		log.Panic().Err(err)
 	}
 	defer file.Close()
 	byteValue, err := io.ReadAll(file)
 	if err != nil {
-		log.Panic(err)
+		log.Panic().Err(err)
 	}
 	json.Unmarshal(byteValue, config)
 	return config
