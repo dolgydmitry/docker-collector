@@ -11,14 +11,14 @@ import (
 )
 
 func RunServer(host string) {
-	log.Printf("Let's run this server in host: %v\n", host)
+	log.Info().Msgf("Let's run this server in host: %v\n", host)
 	router := mux.NewRouter()
 	routes.RegisterBasicRoute(router)
 	http.ListenAndServe(host, router)
 }
 
 func RunServerApp(serverAddress string) {
-	log.Printf("Let's run this server on the host: %v\n", serverAddress)
+	log.Info().Msgf("Let's run this server on the host: %v\n", serverAddress)
 	http.Handle("/metrics", promhttp.Handler())
 	err := http.ListenAndServe(serverAddress, nil)
 	if err != nil {

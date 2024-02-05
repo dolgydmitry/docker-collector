@@ -26,7 +26,7 @@ func createGaugerV1(cnName string) map[string]prometheus.Gauge {
 	for _, metricNameIn := range metricList {
 		metricNameSands := fmt.Sprintf("%v_%v_%v", appName, cnName, metricNameIn)
 		metricName := strings.Replace(metricNameSands, "-", "_", -1)
-		log.Printf("Create metric: %s", metricNameSands)
+		log.Info().Msgf("Create metric: %s", metricNameSands)
 		newMetric := promauto.NewGauge(prometheus.GaugeOpts{
 			Name: metricName,
 			Help: help,
